@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import javax.swing.JPanel;
 import pieces.Knight;
 import pieces.King;
@@ -15,6 +17,8 @@ import pieces.Bishop;
 import pieces.Pawn;
 
 public class Board extends JPanel {
+
+    public String fenStartLingPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public int tileSize = 85;
     int cols = 8;
     int rows = 8;
@@ -27,6 +31,10 @@ public class Board extends JPanel {
     public ChackScanner chackScanner = new ChackScanner(this);
 
     public int enPassantTitle = -1;
+
+    public boolean isWhiteToMove = true;
+    public boolean isGameOver = false;
+
 
     public Board() {
         this.setPreferredSize(new Dimension(this.cols * this.tileSize, this.rows * this.tileSize));
@@ -69,8 +77,13 @@ public class Board extends JPanel {
 
             capture(move.capture);
 
+            isWhiteToMove = !isWhiteToMove;
+
+            updateGameState();
 
     }
+
+
 
     private void moveKing(Move move){
 
@@ -122,6 +135,14 @@ public class Board extends JPanel {
 
     //корректность хода
     public boolean isValidMove(Move move){
+
+        if(isGameOver){
+            return false;
+        }
+
+        if (move.piece.isWhite != isWhiteToMove){
+            return false;
+        }
         if (sameTeam(move.piece, move.capture)){
             return false;
         }
@@ -208,6 +229,37 @@ public class Board extends JPanel {
         this.pieceList.add(new Pawn(this, 6, 1, false));
         this.pieceList.add(new Pawn(this, 7, 1, false));
 
+
+    }
+
+    private void updateGameState(){
+        Piece king = findKing(isWhiteToMove);
+        if(chackScanner.isGaneOver(king)){
+            if(chackScanner.isKingChecked(new Move(this,king, king.col, king.row))){
+                System.out.println(isWhiteToMove ? "!!!Black Wins!!!" : "!!!White Wins!!!");
+
+            }else{
+                System.out.println("Stalemate");
+
+            }
+            isGameOver = true;
+
+        }else if(insufficientMaterial(true) && insufficientMaterial(false)){
+            System.out.println("Insufficient Material");
+            isGameOver = true;
+        }
+
+    }
+
+    private boolean insufficientMaterial(boolean isWhite){
+        ArrayList<String> names = pieceList.stream()
+                .filter(p -> p.isWhite == isWhite)
+                .map(p -> p.name)
+                .collect(Collectors.toCollection(ArrayList::new));
+        if(names.contains("Queen") || names.contains("Rook") ||names.contains("Pawn")){
+            return false;
+        }
+        return names.size() < 3;
 
     }
 

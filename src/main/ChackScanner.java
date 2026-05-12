@@ -120,4 +120,22 @@ public class ChackScanner {
     private boolean checkPawn(Piece p, Piece k, int col, int row){
         return p != null && !board.sameTeam(p, k) && p.name.equals("Pawn");
     }
+
+    public boolean isGaneOver(Piece king){
+        for (Piece piece : board.pieceList){
+            if (board.sameTeam(piece, king)){
+                board.selectedPiece = piece == king ? king : null;
+                for(int row = 0; row < board.rows; row++){
+                    for(int col = 0; col < board.rows; col++){
+                        Move move = new Move(board, piece, col, row);
+                        if(board.isValidMove(move)){
+                            return false;
+                        }
+                    }
+                }
+
+            }
+        }
+        return true;
+    }
 }
