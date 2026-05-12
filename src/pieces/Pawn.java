@@ -38,6 +38,16 @@ public class Pawn extends Piece {
         //взятие с права
         if (col == this.col +1 && row == this.row - colorIndex && board.getPiece(col,row) != null)
             return true;
+
+        //Взятие(en passant) с лева
+        if(board.getTileSize(col,row) == board.enPassantTitle && col == this.col - 1 && row == this.row - colorIndex && board.getPiece(col, row + colorIndex) != null){
+            return true;
+        }
+
+        //Взятие(en passant) с права
+        if(board.getTileSize(col,row) == board.enPassantTitle && col == this.col + 1 && row == this.row - colorIndex && board.getPiece(col, row + colorIndex) != null){
+            return true;
+        }
         return false;
     }
 }

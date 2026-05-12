@@ -24,6 +24,8 @@ public class Board extends JPanel {
 
     Input input = new Input(this);
 
+    public int enPassantTitle = -1;
+
     public Board() {
         this.setPreferredSize(new Dimension(this.cols * this.tileSize, this.rows * this.tileSize));
 
@@ -46,6 +48,44 @@ public class Board extends JPanel {
     }
 
     public void makeMove(Move move){
+        if(move.piece.name.equals("Pawn")){
+            movePawn(move);
+        }else {
+
+
+            move.piece.col = move.newCol;
+            move.piece.row = move.newRow;
+            move.piece.xPos = move.newCol * tileSize;
+            move.piece.yPos = move.newRow * tileSize;
+
+            move.piece.isFirstMove = false;
+
+            capture(move.capture);
+        }
+
+    }
+
+    private void movePawn(Move move) {
+
+        //Взятие на проходе
+
+        int colorIndex = move.piece.isWhite ? 1 : -1;
+
+        if(getTileSize(move.newCol, move.newRow) == enPassantTitle){
+            move.capture = getPiece(move.newCol, move.newRow + colorIndex);
+        }
+        if(Math.abs(move.piece.row - move.newRow) == 2){
+            enPassantTitle = getTileSize(move.newCol,move.newRow + colorIndex);
+        }else{
+            enPassantTitle = -1;
+        }
+
+        //Улучшение
+        colorIndex = move.piece.isWhite ? 0 : 7;
+        if (move.newRow == colorIndex){
+            promotePawn(move);
+        }
+
         move.piece.col = move.newCol;
         move.piece.row = move.newRow;
         move.piece.xPos = move.newCol * tileSize;
@@ -53,12 +93,16 @@ public class Board extends JPanel {
 
         move.piece.isFirstMove = false;
 
-        capture(move);
-
+        capture(move.capture);
     }
 
-    public void capture(Move move){
-        pieceList.remove(move.capture);
+    private void promotePawn(Move move) {
+        pieceList.add(new Queen(this, move.newCol, move.newRow, move.piece.isWhite));
+        capture(move.piece);
+    }
+
+    public void capture(Piece piece){
+        pieceList.remove(piece);
     }
 
     //корректность хода
@@ -85,6 +129,9 @@ public class Board extends JPanel {
     }
 
 
+    public int getTileSize(int col, int row){
+        return row * rows * col;
+    }
 
     public void addPieces() {
         //White
