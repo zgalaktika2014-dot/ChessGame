@@ -11,6 +11,7 @@ public class Input extends MouseAdapter {
         this.board = board;
     }
 
+    //нажатие
     @Override
     public void mousePressed(MouseEvent e) {
 
@@ -24,6 +25,7 @@ public class Input extends MouseAdapter {
         }
     }
 
+    //опускание фигуры (да-да)
     @Override
     public void mouseReleased(MouseEvent e) {
         int col = e.getX()/board.tileSize;
@@ -46,9 +48,10 @@ public class Input extends MouseAdapter {
 
     }
 
+    //перетаскивание фигуры
     @Override
     public void mouseDragged(MouseEvent e) {
-        if(board.tileSize != 0){
+        if (board.selectedPiece != null && board.tileSize != 0){
             board.selectedPiece.xPos = e.getX() - board.tileSize/2;
             board.selectedPiece.yPos = e.getY() - board.tileSize/2;
 

@@ -20,4 +20,53 @@ public class Bishop extends Piece {
         }
 
     }
+
+    public boolean isValidMovement(int col, int row) {
+        return Math.abs(col - this.col) == Math.abs(row - this.row);
+    }
+
+    public boolean moveCollidesWithPiece(int col, int row) {
+
+        if (Math.abs(col - this.col) != Math.abs(row - this.row)) {
+            return true;  // ход невозможен
+        }
+
+        // Вверх влево
+        if (this.col > col && this.row > row) {
+            for (int i = 1; i < Math.abs(this.col - col); i++) {
+                if (board.getPiece(this.col - i, this.row - i) != null) {
+                    return true;  // препятствие
+                }
+            }
+        }
+
+        // Вверх вправо
+        if (this.col < col && this.row > row) {
+            for (int i = 1; i < Math.abs(this.col - col); i++) {
+                if (board.getPiece(this.col + i, this.row - i) != null) {
+                    return true;
+                }
+            }
+        }
+
+        // Вниз влево
+        if (this.col > col && this.row < row) {
+            for (int i = 1; i < Math.abs(this.col - col); i++) {
+                if (board.getPiece(this.col - i, this.row + i) != null) {
+                    return true;
+                }
+            }
+        }
+
+        // Вниз вправо
+        if (this.col < col && this.row < row) {
+            for (int i = 1; i < Math.abs(this.col - col); i++) {
+                if (board.getPiece(this.col + i, this.row + i) != null) {
+                    return true;
+                }
+            }
+        }
+
+        return false;  // путь свободен
+    }
 }

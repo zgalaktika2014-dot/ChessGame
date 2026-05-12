@@ -35,6 +35,11 @@ public class Piece {
 
     }
 
+    //проверка геометрии
+    public boolean isValidMovement(int col, int row){return true;}
+    //проверка на наличие преград
+    public boolean moveCollidesWithPiece(int col, int row){return false;}
+
     public void paint(Graphics2D g2d) {
         if (this.sprite != null) {
             g2d.drawImage(this.sprite, this.xPos, this.yPos, (ImageObserver)null);

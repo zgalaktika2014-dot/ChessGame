@@ -33,6 +33,7 @@ public class Board extends JPanel {
         addPieces();
     }
 
+    //используем в инпуте при нажатии
     public Piece getPiece(int col, int row){
         for(Piece piece:pieceList){
             if(piece.col == col && piece.row == row){
@@ -58,14 +59,22 @@ public class Board extends JPanel {
         pieceList.remove(move.capture);
     }
 
+    //корректность хода
     public boolean isValidMove(Move move){
         if (sameTeam(move.piece, move.capture)){
+            return false;
+        }
+        if (!move.piece.isValidMovement(move.newCol, move.newRow)){
+            return false;
+        }
+        if (move.piece.moveCollidesWithPiece(move.newCol, move.newRow)){
             return false;
         }
 
         return true;
     }
 
+    //проверка не бъём ли мы своих
     public boolean sameTeam(Piece p1, Piece p2){
         if(p1 == null || p2 == null){
             return false;
@@ -128,13 +137,26 @@ public class Board extends JPanel {
     public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
 
-        for(int r = 0; r < this.rows; ++r) {
+        //цвета доски
+        for(int r = 0; r < this.rows; ++r)
             for(int c = 0; c < this.cols; ++c) {
                 g2d.setColor((c + r) % 2 == 0 ? new Color(228, 213, 165) : new Color(179, 129, 43));
                 g2d.fillRect(c * this.tileSize, r * this.tileSize, this.tileSize, this.tileSize);
             }
-        }
 
+
+        //цвета выделения возможных ходов
+        if(selectedPiece != null)
+        for(int r = 0; r < this.rows; ++r)
+            for(int c = 0; c < this.cols; ++c) {
+
+                if (isValidMove(new Move(this, selectedPiece, c, r))) {
+                    g2d.setColor(new Color(0, 255, 0, 100));
+                    g2d.fillRect(c * tileSize, r * tileSize, tileSize, tileSize);
+                }
+            }
+
+        //цвет фигуры
         for(Piece piece : this.pieceList) {
             piece.paint(g2d);
         }
