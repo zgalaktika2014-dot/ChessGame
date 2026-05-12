@@ -21,6 +21,8 @@ public class Piece {
     protected Image sprite;
     protected Board board;
 
+    public boolean isFirstMove = true;
+
     public Piece(Board board) {
         try {
             this.sheet = ImageIO.read(ClassLoader.getSystemResourceAsStream("res/pieces.png"));
