@@ -24,7 +24,7 @@ public class Board extends JPanel {
 
     Input input = new Input(this);
 
-    ChackScanner chackScanner = new ChackScanner(this);
+    public ChackScanner chackScanner = new ChackScanner(this);
 
     public int enPassantTitle = -1;
 
@@ -50,9 +50,14 @@ public class Board extends JPanel {
     }
 
     public void makeMove(Move move){
+
         if(move.piece.name.equals("Pawn")){
             movePawn(move);
-        }else {
+        }else if (move.piece.name.equals("King")) {
+            moveKing((move));
+        }
+
+
 
 
             move.piece.col = move.newCol;
@@ -63,10 +68,25 @@ public class Board extends JPanel {
             move.piece.isFirstMove = false;
 
             capture(move.capture);
-        }
+
 
     }
 
+    private void moveKing(Move move){
+
+        if(Math.abs(move.piece.col - move.newCol) == 2){
+            Piece rook;
+            if (move.piece.col < move.newCol){
+                rook = getPiece(7,move.piece.row);
+                rook.col = 5;
+            }else{
+                rook = getPiece(0,move.piece.row);
+                rook.col = 3;
+            }
+            rook.xPos = rook.col * tileSize;
+        }
+
+    }
     private void movePawn(Move move) {
 
         //Взятие на проходе
@@ -88,14 +108,7 @@ public class Board extends JPanel {
             promotePawn(move);
         }
 
-        move.piece.col = move.newCol;
-        move.piece.row = move.newRow;
-        move.piece.xPos = move.newCol * tileSize;
-        move.piece.yPos = move.newRow * tileSize;
 
-        move.piece.isFirstMove = false;
-
-        capture(move.capture);
     }
 
     private void promotePawn(Move move) {
